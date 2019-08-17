@@ -1,0 +1,41 @@
+﻿<Window x:Class="ParserGui.FileDetails"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ParserGui"
+        mc:Ignorable="d"
+        Title="FileDetails" Height="450" Width="800" Loaded="Window_Loaded" Closed="Window_Closed">
+  <Grid>
+    <Label Content="File Structure" HorizontalAlignment="Left" Margin="36,27,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="20"/>
+    <Label Content="Quality Attributes" HorizontalAlignment="Left" Margin="433,27,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="20"/>
+    <TreeView x:Name="FileInfoHierarchy" HorizontalAlignment="Left" Height="293" Margin="36,69,0,0" VerticalAlignment="Top" Width="321" ItemsSource="{Binding}" SelectedItemChanged="FileInfoHierarchy_SelectedItemChanged">
+      <TreeView.ItemTemplate>
+        <HierarchicalDataTemplate ItemsSource="{Binding Path=functions}">
+          <TextBlock Text="{Binding Path=data.Element[Name].Value}"></TextBlock>
+        </HierarchicalDataTemplate>
+      </TreeView.ItemTemplate>
+    </TreeView>
+    <Grid HorizontalAlignment="Left" Height="293" Margin="436,69,0,0" VerticalAlignment="Top" Width="309">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="72*" />
+        <ColumnDefinition Width="31*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="1*" />
+        <RowDefinition Height="1*" />
+        <RowDefinition Height="1*" />
+        <RowDefinition Height="1*" />
+        <RowDefinition Height="1*" />
+      </Grid.RowDefinitions>
+      <Label Content="Lines of Code" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="18" Height="34" Margin="0,12,0,13" Width="120"/>
+      <Label Grid.Row="1" Content="Cyclomatic Complexity" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="18" Height="34" Margin="0,12" Width="199"/>
+      <Label Grid.Row="2" Content="Cohesion" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="18" Height="34" Margin="0,13,0,12" Width="86"/>
+      <Label Grid.Row="3" Content="MIndex" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="18" Height="34" Margin="0,12" Width="72"/>
+      <Label Grid.Column="2" Name="LinesOfCodeLabel" Content="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="18" Height="34" Margin="0,12,0,13" Width="120"/>
+      <Label Grid.Column="2" Name="CyclomaticCompLabel" Grid.Row="1" Content="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="18" Height="34" Margin="0,12" Width="199"/>
+      <Label Grid.Column="2" Name="CohesionLabel" Grid.Row="2" Content="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="18" Height="34" Margin="0,13,0,12" Width="86"/>
+      <Label Grid.Column="2" Name="MIndexLabel" Grid.Row="3" Content="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="18" Height="34" Margin="0,12" Width="72"/>
+    </Grid>
+  </Grid>
+</Window>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="ece07d94-2196-47ab-a2af-101b36f7d9e3" ChangeDateTime="02/23/2018 03:44:22">
+    <Property Name="ElementName" Value="[dbo].[Files].[Filename]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Files]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Name" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d6ec7e57-b851-4451-a4ed-00ec5c38f5f3" ChangeDateTime="02/27/2018 06:14:21">
+    <Property Name="ElementName" Value="[dbo].[Files].[FIleData]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Files]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FileData" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="66461631-dc33-45ea-8909-03cbbc8a073f" ChangeDateTime="09/10/2018 03:38:55">
+    <Property Name="ElementName" Value="[dbo].[Projects]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[Folders]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c4b649e0-a93f-4c09-8934-d7137a355019" ChangeDateTime="09/10/2018 06:31:10">
+    <Property Name="ElementName" Value="[dbo].[Files].[ProjectId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Files]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FolderId" />
+  </Operation>
+</Operations>
