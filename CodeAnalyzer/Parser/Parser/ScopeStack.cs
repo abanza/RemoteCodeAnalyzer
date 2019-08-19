@@ -1,13 +1,5 @@
-﻿/////////////////////////////////////////////////////////////////////////
-// ScopeStack.cs  -  Generic stack to help with static analysis        //
-//                   Holds application specific ElementProperty type   //
-// ver 1.0                                                             //
-// Language:    C#, Visual Studio 10.0, .Net Framework 4.0             //
-// Platform:    Dell Precision T7400 , Win 7, SP 1                     //
-// Application: Pr#2 Help, CSE681, Fall 2011                           //
-// Author:      Jim Fawcett, CST 2-187, Syracuse University            //
-//              (315) 443-3948, jfawcett@twcny.rr.com                  //
-/////////////////////////////////////////////////////////////////////////
+﻿// ScopeStack.cs  -  Generic stack to help with static analysis        
+
 /*
  * Package Operations
  * ==================
@@ -52,122 +44,122 @@ using System.Text;
 
 namespace Parser.Parser
 {
-  public class ScopeStack<E>
-  {
-    List<E> stack_ = new List<E>();
-    E lastPopped_;
+	public class ScopeStack<E>
+	{
+		List<E> stack_ = new List<E>();
+		E lastPopped_;
 
-    //----< push element onto stack >------------------------------------
+		//----< push element onto stack >------------------------------------
 
-    public void push(E elem)
-    {
-      stack_.Add(elem);
-    }
-    //----< pop element off of stack >-----------------------------------
+		public void push(E elem)
+		{
+			stack_.Add(elem);
+		}
+		//----< pop element off of stack >-----------------------------------
 
-    public E pop()
-    {
-      int len = stack_.Count;
-      if (len == 0)
-        throw new Exception("empty scope stack");
-      E elem = stack_[len - 1];
-      stack_.RemoveAt(len - 1);
-      lastPopped_ = elem;
-      return elem;
-    }
-    //----< remove all elements from stack >-----------------------------
+		public E pop()
+		{
+			int len = stack_.Count;
+			if (len == 0)
+				throw new Exception("empty scope stack");
+			E elem = stack_[len - 1];
+			stack_.RemoveAt(len - 1);
+			lastPopped_ = elem;
+			return elem;
+		}
+		//----< remove all elements from stack >-----------------------------
 
-    public void clear()
-    {
-      stack_.Clear();
-    }
-    //----< index into stack contents >----------------------------------
+		public void clear()
+		{
+			stack_.Clear();
+		}
+		//----< index into stack contents >----------------------------------
 
-    public E this[int i]
-    {
-      get
-      {
-        if (i < 0 || stack_.Count <= i)
-          throw new Exception("scope stack index out of range");
-        return stack_[i];
-      }
-      set
-      {
-        if (i < 0 || stack_.Count <= i)
-          throw new Exception("scope stack index out of range");
-        stack_[i] = value;
-      }
-    }
-    //----< number of elements on stack property >-----------------------
+		public E this[int i]
+		{
+			get
+			{
+				if (i < 0 || stack_.Count <= i)
+					throw new Exception("scope stack index out of range");
+				return stack_[i];
+			}
+			set
+			{
+				if (i < 0 || stack_.Count <= i)
+					throw new Exception("scope stack index out of range");
+				stack_[i] = value;
+			}
+		}
+		//----< number of elements on stack property >-----------------------
 
-    public int count
-    {
-      get { return stack_.Count; }
-    }
-    //----< get lastPopped >---------------------------------------------
+		public int count
+		{
+			get { return stack_.Count; }
+		}
+		//----< get lastPopped >---------------------------------------------
 
-    public E lastPopped()
-    {
-      return lastPopped_;
-    }
-    //----< display using element ToString() method() >------------------
+		public E lastPopped()
+		{
+			return lastPopped_;
+		}
+		//----< display using element ToString() method() >------------------
 
-    public void display()
-    {
-      for (int i = 0; i < count; ++i)
-      {
-        Console.Write("\n  {0}",stack_[i].ToString());
-      }
-    }
+		public void display()
+		{
+			for (int i = 0; i < count; ++i)
+			{
+				Console.Write("\n  {0}", stack_[i].ToString());
+			}
+		}
 
-    //----< Get the most local stack element >--------
-    public E GetContext()
-    {
-      var len = stack_.Count;
-      return len > 0 ? stack_[len - 1] : default(E);
-    }
+		//----< Get the most local stack element >--------
+		public E GetContext()
+		{
+			var len = stack_.Count;
+			return len > 0 ? stack_[len - 1] : default(E);
+		}
 
-    //----< Get the most local stack element which matches the filter criteria >
-    public E GetContext(Func<E, bool> filter)
-    {
-      var len = stack_.Count;
-      for (var i = len - 1; i >= 0; i--)
-      {
-        if (filter(stack_[i]))
-        {
-          return stack_[i];
-        }
-      }
-      return default(E);
-    }
-  }
+		//----< Get the most local stack element which matches the filter criteria >
+		public E GetContext(Func<E, bool> filter)
+		{
+			var len = stack_.Count;
+			for (var i = len - 1; i >= 0; i--)
+			{
+				if (filter(stack_[i]))
+				{
+					return stack_[i];
+				}
+			}
+			return default(E);
+		}
+	}
 
-  class Test
-  {
-    public struct Elem 
-    {
-      public string type;
-      public string name;
-      public int place;
-      public void make(string tp, string nm, int pl)
-      {
-        type = tp;
-        name = nm;
-        place = pl;
-      }
-      public override string ToString()
-      {
-        StringBuilder temp = new StringBuilder();
-        temp.Append("{");
-        temp.Append(String.Format("{0,-10}",type)).Append(" : ");
-        temp.Append(String.Format("{0,-10}",name)).Append(" : ");
-        temp.Append(String.Format("{0,-5}",place));
-        temp.Append("}");
-        return temp.ToString();
-      }
-    }
+	class Test
+	{
+		public struct Elem
+		{
+			public string type;
+			public string name;
+			public int place;
+			public void make(string tp, string nm, int pl)
+			{
+				type = tp;
+				name = nm;
+				place = pl;
+			}
+			public override string ToString()
+			{
+				StringBuilder temp = new StringBuilder();
+				temp.Append("{");
+				temp.Append(String.Format("{0,-10}", type)).Append(" : ");
+				temp.Append(String.Format("{0,-10}", name)).Append(" : ");
+				temp.Append(String.Format("{0,-5}", place));
+				temp.Append("}");
+				return temp.ToString();
+			}
+		}
 
-#if(TEST_SCOPESTACK)
+#if (TEST_SCOPESTACK)
     static void Main()
     {
       Console.Write("\n  Test ScopeStack");
@@ -203,5 +195,5 @@ namespace Parser.Parser
       Console.Write("\n\n");
     }
 #endif
-  }
+	}
 }

@@ -1,13 +1,5 @@
-/////////////////////////////////////////////////////////////////////////
-// Toker.cs  -  Tokenizer                                              //
-//              Reads words and punctuation symbols from a file stream //
-// ver 2.8                                                             //
-// Language:    C#, Visual Studio 10.0, .Net Framework 4.0             //
-// Platform:    Dell Precision T7400 , Win 7, SP 1                     //
-// Application: Pr#2 Help, CSE681, Fall 2011                           //
-// Author:      Jim Fawcett, CST 2-187, Syracuse University            //
-//              (315) 443-3948, jfawcett@twcny.rr.com                  //
-/////////////////////////////////////////////////////////////////////////
+// Toker.cs  -  Tokenizer                                              
+
 /*
  * Module Operations
  * =================
@@ -103,515 +95,515 @@ using System.Text;
 
 namespace Parser.Parser
 {
-  ///////////////////////////////////////////////////////////////////////
-  // class CToker - tokenizer
+	///////////////////////////////////////////////////////////////////////
+	// class CToker - tokenizer
 
-  class CToker
-  {
-    private TextReader ts;            // source of tokens
-    private List<string> tokBuffer;   // intermediate token store
-    private string lineRemainder;            // unprocessed line fragment
+	class CToker
+	{
+		private TextReader ts;            // source of tokens
+		private List<string> tokBuffer;   // intermediate token store
+		private string lineRemainder;            // unprocessed line fragment
 
-    //----< return comments? property >----------------------------------
+		//----< return comments? property >----------------------------------
 
-    public bool returnComments
-    {
-      get; set;
-    }
-    //----< line count property >----------------------------------------
+		public bool returnComments
+		{
+			get; set;
+		}
+		//----< line count property >----------------------------------------
 
-    public int lineCount
-    {
-      get;
-      private set;
-    }
-    //----< constructor >------------------------------------------------
+		public int lineCount
+		{
+			get;
+			private set;
+		}
+		//----< constructor >------------------------------------------------
 
-    public CToker()
-    {
-      tokBuffer = new List<string>();
-      lineCount = 0;
-      returnComments = false;
-    }
-    //----< opens file stream for tokenizing >---------------------------
+		public CToker()
+		{
+			tokBuffer = new List<string>();
+			lineCount = 0;
+			returnComments = false;
+		}
+		//----< opens file stream for tokenizing >---------------------------
 
-    public bool openFile(string fileName)
-    {
-      lineCount = 0;
-      lineRemainder = "";
-      try
-      {
-        ts = new StreamReader(fileName);
-      }
-      catch(Exception)
-      {
-        return false;
-      }
-      return true;
-    }
-    public bool openFile(Stream fileStream)
-    {
-      lineCount = 0;
-      lineRemainder = "";
-      try
-      {
-        ts = new StreamReader(fileStream);
-      }
-      catch (Exception e)
-      {
-        return false;
-      }
-      return true;
-    }
+		public bool openFile(string fileName)
+		{
+			lineCount = 0;
+			lineRemainder = "";
+			try
+			{
+				ts = new StreamReader(fileName);
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+			return true;
+		}
+		public bool openFile(Stream fileStream)
+		{
+			lineCount = 0;
+			lineRemainder = "";
+			try
+			{
+				ts = new StreamReader(fileStream);
+			}
+			catch (Exception e)
+			{
+				return false;
+			}
+			return true;
+		}
 
-    //----< opens string for tokenizing >------------------------------
+		//----< opens string for tokenizing >------------------------------
 
-    public bool openString(string source)
-    {
-      lineCount = 0;
-      lineRemainder = "";
-      try
-      {
-        ts = new StringReader(source);
-      }
-      catch(Exception)
-      {
-        return false;
-      }
-      return true;
-    }
-    //----< closes filestream >------------------------------------------
+		public bool openString(string source)
+		{
+			lineCount = 0;
+			lineRemainder = "";
+			try
+			{
+				ts = new StringReader(source);
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+			return true;
+		}
+		//----< closes filestream >------------------------------------------
 
-    public void close()
-    {
-      var sr = ts as StreamReader;
-      if (sr.BaseStream is MemoryStream)
-      {
-        sr.BaseStream.Position = 0;
-      }
-      else
-      {
-        ts.Close();
-      }
-    }
-    //----< remove return character from StringBuilder >-----------------
+		public void close()
+		{
+			var sr = ts as StreamReader;
+			if (sr.BaseStream is MemoryStream)
+			{
+				sr.BaseStream.Position = 0;
+			}
+			else
+			{
+				ts.Close();
+			}
+		}
+		//----< remove return character from StringBuilder >-----------------
 
-    void removeReturn(ref StringBuilder tok)
-    {
-      for (int i = 0; i < tok.Length; ++i)
-      {
-        // stream readers tend to hand back strings with '\r' which
-        // make processing more complicated, so we remove them
-        if (tok[i] == '\r')
-          tok.Remove(i, 1);
-      }
-    }
-    //----< remove return character from string >------------------------
+		void removeReturn(ref StringBuilder tok)
+		{
+			for (int i = 0; i < tok.Length; ++i)
+			{
+				// stream readers tend to hand back strings with '\r' which
+				// make processing more complicated, so we remove them
+				if (tok[i] == '\r')
+					tok.Remove(i, 1);
+			}
+		}
+		//----< remove return character from string >------------------------
 
-    string removeReturn(string tok)
-    {
-      StringBuilder temp = new StringBuilder();
-      for (int i = 0; i < tok.Length; ++i)
-      {
-        if (tok[i] != '\r')
-          temp.Append(tok[i]);
-      }
-      return temp.ToString();
-    }
-    //----< read a single line, retaining newline character >------------
+		string removeReturn(string tok)
+		{
+			StringBuilder temp = new StringBuilder();
+			for (int i = 0; i < tok.Length; ++i)
+			{
+				if (tok[i] != '\r')
+					temp.Append(tok[i]);
+			}
+			return temp.ToString();
+		}
+		//----< read a single line, retaining newline character >------------
 
-    public string readLine()
-    {
-      StringBuilder temp = new StringBuilder();
-      while(true)
-      {
-        int i = ts.Read();
-        if ((char)i == '\n')
-          lineCount++;
-        if(i == -1)
-        {
-          return temp.ToString();
-        }
-        char ch = (char)i;
-        temp.Append(ch);
-        if(ch == '\n')
-          break;
-      }
-      removeReturn(ref temp);
-      string outstr = temp.ToString();
-      return outstr;
-    }
-    //----< extracts line of text for tokenizing >-----------------------
-    //
-    //  Passes back a line to process for tokens as a side effect
-    //  through the out string parameter.
-    //  - if line has a leading comment or quote it is extracted and 
-    //    saved in tokBuffer and remaining string is passed back
-    //  - if line has a trailing comment or quote the line fragment
-    //    at the front is passed back after saving the rest of the
-    //    line for later processing
-    //  - always passes back a line to process until end of file
-    //  - returns true if end of file has not been reached
-    //
-    bool getLine(out string line)
-    {
-      do
-      {
-        if(lineRemainder == "")  // previously saved line fragment is empty
-        {
-          try
-          {
-            lineRemainder = readLine();
+		public string readLine()
+		{
+			StringBuilder temp = new StringBuilder();
+			while (true)
+			{
+				int i = ts.Read();
+				if ((char)i == '\n')
+					lineCount++;
+				if (i == -1)
+				{
+					return temp.ToString();
+				}
+				char ch = (char)i;
+				temp.Append(ch);
+				if (ch == '\n')
+					break;
+			}
+			removeReturn(ref temp);
+			string outstr = temp.ToString();
+			return outstr;
+		}
+		//----< extracts line of text for tokenizing >-----------------------
+		//
+		//  Passes back a line to process for tokens as a side effect
+		//  through the out string parameter.
+		//  - if line has a leading comment or quote it is extracted and 
+		//    saved in tokBuffer and remaining string is passed back
+		//  - if line has a trailing comment or quote the line fragment
+		//    at the front is passed back after saving the rest of the
+		//    line for later processing
+		//  - always passes back a line to process until end of file
+		//  - returns true if end of file has not been reached
+		//
+		bool getLine(out string line)
+		{
+			do
+			{
+				if (lineRemainder == "")  // previously saved line fragment is empty
+				{
+					try
+					{
+						lineRemainder = readLine();
 
-            if(lineRemainder == null || lineRemainder == "")
-            {
-              line = "";
-              return false;     // end of file
-            }
-          }
-          catch(Exception except)
-          {
-            line = except.Message;
-            return false;       // error reading file
-          }
-        }
-        line = extract(ref lineRemainder);
-        //---- added 14 Oct 14
-        if (line == "")
-          lineRemainder = lineRemainder + readLine();
-        //---- end added
+						if (lineRemainder == null || lineRemainder == "")
+						{
+							line = "";
+							return false;     // end of file
+						}
+					}
+					catch (Exception except)
+					{
+						line = except.Message;
+						return false;       // error reading file
+					}
+				}
+				line = extract(ref lineRemainder);
+				//---- added 14 Oct 14
+				if (line == "")
+					lineRemainder = lineRemainder + readLine();
+				//---- end added
 
-        // keep extracting until there is a line to tokenize
-        // or tokBuffer has contents
-      } while(line == "" && tokBuffer.Count == 0);
-      return true;
-    }
-    //
-    //----< extract tokens and comments >------------------------------
-    //
-    //  Extract the first of:
-    //    C++ comments, C comments, double quotes, single quotes5
-    //
-    string extract(ref string lineRemainder)
-    {
-      char[] whiteChars = { ' ', '\r', '\t', '\f' };  // newlines are tokens
-      lineRemainder = lineRemainder.TrimStart(whiteChars);
+				// keep extracting until there is a line to tokenize
+				// or tokBuffer has contents
+			} while (line == "" && tokBuffer.Count == 0);
+			return true;
+		}
+		//
+		//----< extract tokens and comments >------------------------------
+		//
+		//  Extract the first of:
+		//    C++ comments, C comments, double quotes, single quotes5
+		//
+		string extract(ref string lineRemainder)
+		{
+			char[] whiteChars = { ' ', '\r', '\t', '\f' };  // newlines are tokens
+			lineRemainder = lineRemainder.TrimStart(whiteChars);
 
-      int posErr = lineRemainder.IndexOf("@\"");
-      if (posErr != -1)
-        lineRemainder = mapToOldDoubleQuoteStyle(lineRemainder);
+			int posErr = lineRemainder.IndexOf("@\"");
+			if (posErr != -1)
+				lineRemainder = mapToOldDoubleQuoteStyle(lineRemainder);
 
-      int posCppComm = lineRemainder.IndexOf("//");
-      int posCComm   = lineRemainder.IndexOf("/*");
-      int posDQuote  = lineRemainder.IndexOf('\"');
-      int posSQuote  = lineRemainder.IndexOf('\'');
+			int posCppComm = lineRemainder.IndexOf("//");
+			int posCComm = lineRemainder.IndexOf("/*");
+			int posDQuote = lineRemainder.IndexOf('\"');
+			int posSQuote = lineRemainder.IndexOf('\'');
 
-      // find first of the above
+			// find first of the above
 
-      int[] positions = { posCppComm, posCComm, posDQuote, posSQuote };
-      for(int i=0; i<positions.Length; ++i)
-        if(positions[i] == -1)
-          positions[i] = Int32.MaxValue;
-      Array.Sort(positions);
-      
-      if(positions[0] == Int32.MaxValue)    // nothing to extract
-      {
-        string retStr = lineRemainder;
-        lineRemainder = "";
-        return retStr;
-      }
-      if (posCppComm == positions[0] || posCComm == positions[0])
-        return extractComment(ref lineRemainder);
-      if(posDQuote == positions[0])
-        return extractDQuote(ref lineRemainder);
-      if(posSQuote == positions[0])
-        return extractSQuote(ref lineRemainder);
-      throw new Exception("extract failed");
-    }
-    //
-    //----< convert @ style string to old style >--------------------
+			int[] positions = { posCppComm, posCComm, posDQuote, posSQuote };
+			for (int i = 0; i < positions.Length; ++i)
+				if (positions[i] == -1)
+					positions[i] = Int32.MaxValue;
+			Array.Sort(positions);
 
-    string mapToOldDoubleQuoteStyle(string str)
-    {
-      bool foundNewStyle = false;
-      StringBuilder temp = new StringBuilder();
-      int i;
-      for (i = 0; i < str.Length; ++i)
-      {
-        if (str[i] == '@')
-        {
-          foundNewStyle = true;
-          continue;
-        }
-        temp.Append(str[i]);
-        if (foundNewStyle)
-        {
-          if (str[i] == '\\')
-            temp.Append('\\');
-          if (str[i] == '"' && str[i - 1] != '\\' && str[i-1] != '@')
-            break;
-        }
-      }
-      for (int j = i + 1; j < str.Length; ++j)
-        temp.Append(str[j]);
-      return temp.ToString();
-    }
-    //
-    //----< extract double quote >-------------------------------------
+			if (positions[0] == Int32.MaxValue)    // nothing to extract
+			{
+				string retStr = lineRemainder;
+				lineRemainder = "";
+				return retStr;
+			}
+			if (posCppComm == positions[0] || posCComm == positions[0])
+				return extractComment(ref lineRemainder);
+			if (posDQuote == positions[0])
+				return extractDQuote(ref lineRemainder);
+			if (posSQuote == positions[0])
+				return extractSQuote(ref lineRemainder);
+			throw new Exception("extract failed");
+		}
+		//
+		//----< convert @ style string to old style >--------------------
 
-    string extractDQuote(ref string lineRemainder)
-    {
-      string retStr = "";
-      int pos = lineRemainder.IndexOf('\"');
-      if(pos == 0)
-      {
-        StringBuilder quote = new StringBuilder();
-        quote.Append('\"');
-        for(int i=1; i<lineRemainder.Length; ++i)
-        {
-          quote.Append(lineRemainder[i]);
-          if(lineRemainder[i] == '\"')
-          {
-            if(lineRemainder[i-1] != '\\' || lineRemainder[i-2] == '\\')
-            {
-              tokBuffer.Add(quote.ToString());
-              lineRemainder = lineRemainder.Remove(0,i+1);
-              return "";
-            }
-          }
-        }
-      }
-      else
-      {
-        retStr = lineRemainder.Remove(pos,lineRemainder.Length-pos);
-        lineRemainder = lineRemainder.Remove(0,pos);
-        return retStr;
-      }
-      //throw new Exception("extractDQuote failed");
-      return retStr;
-    }
-    //
-    //----< extract single quote >-------------------------------------
+		string mapToOldDoubleQuoteStyle(string str)
+		{
+			bool foundNewStyle = false;
+			StringBuilder temp = new StringBuilder();
+			int i;
+			for (i = 0; i < str.Length; ++i)
+			{
+				if (str[i] == '@')
+				{
+					foundNewStyle = true;
+					continue;
+				}
+				temp.Append(str[i]);
+				if (foundNewStyle)
+				{
+					if (str[i] == '\\')
+						temp.Append('\\');
+					if (str[i] == '"' && str[i - 1] != '\\' && str[i - 1] != '@')
+						break;
+				}
+			}
+			for (int j = i + 1; j < str.Length; ++j)
+				temp.Append(str[j]);
+			return temp.ToString();
+		}
+		//
+		//----< extract double quote >-------------------------------------
 
-    string extractSQuote(ref string lineRemainder)
-    {
-      string retStr;
-      int pos = lineRemainder.IndexOf('\'');
-      if(pos == 0)
-      {
-        StringBuilder quote = new StringBuilder();
-        quote.Append('\'');
-        for(int i=1; i<lineRemainder.Length; ++i)
-        {
-          quote.Append(lineRemainder[i]);
-          if(lineRemainder[i] == '\'')
-          {
-            if(lineRemainder[i-1] != '\\' || lineRemainder[i-2] == '\\')
-            {
-              tokBuffer.Add(quote.ToString());
-              lineRemainder = lineRemainder.Remove(0,i+1);
-              return "";
-            }
-          }
-        }
-      }
-      else
-      {
-        retStr = lineRemainder.Remove(pos,lineRemainder.Length-pos);
-        lineRemainder = lineRemainder.Remove(0,pos);
-        return retStr;
-      }
-      throw new Exception("extractSQuote failed");
-    }
-    //
-    //----< extract comment >------------------------------------------
+		string extractDQuote(ref string lineRemainder)
+		{
+			string retStr = "";
+			int pos = lineRemainder.IndexOf('\"');
+			if (pos == 0)
+			{
+				StringBuilder quote = new StringBuilder();
+				quote.Append('\"');
+				for (int i = 1; i < lineRemainder.Length; ++i)
+				{
+					quote.Append(lineRemainder[i]);
+					if (lineRemainder[i] == '\"')
+					{
+						if (lineRemainder[i - 1] != '\\' || lineRemainder[i - 2] == '\\')
+						{
+							tokBuffer.Add(quote.ToString());
+							lineRemainder = lineRemainder.Remove(0, i + 1);
+							return "";
+						}
+					}
+				}
+			}
+			else
+			{
+				retStr = lineRemainder.Remove(pos, lineRemainder.Length - pos);
+				lineRemainder = lineRemainder.Remove(0, pos);
+				return retStr;
+			}
+			//throw new Exception("extractDQuote failed");
+			return retStr;
+		}
+		//
+		//----< extract single quote >-------------------------------------
 
-    string extractComment(ref string lineRemainder)
-    {
-      char[] WhiteChars = { ' ', '\t', '\r' };
-      string line;
-      int pos = lineRemainder.IndexOf("//");
-      if(pos == 0)                          // whole line is C++ comment
-      {
-        if(lineRemainder[lineRemainder.Length-1] == '\n')
-        {
-          lineRemainder = lineRemainder.Remove(lineRemainder.Length-1,1);
-          tokBuffer.Add(lineRemainder);
-          lineRemainder = "";
-          return "\n";
-        }
-        tokBuffer.Add(lineRemainder);
-        lineRemainder = "";
-        return lineRemainder;
-      }
-      if(pos > -1)                          // end of line is C++ comment
-      {
-        line = lineRemainder.Remove(pos,lineRemainder.Length-pos).TrimEnd(WhiteChars);
-        lineRemainder = lineRemainder.Remove(0,pos);
-        return line;
-      }
-      pos = lineRemainder.IndexOf("/*");    // line contains C comment
-      if(pos > -1)
-      {
-        if(pos == 0)
-        {
-          eatCComment();
-          return "";
-        }
-        string retStr = lineRemainder.Remove(pos,lineRemainder.Length-pos);
-        lineRemainder = lineRemainder.Remove(0,pos);
-        return retStr;
-      }
-      // if we get here there is no comment in line
+		string extractSQuote(ref string lineRemainder)
+		{
+			string retStr;
+			int pos = lineRemainder.IndexOf('\'');
+			if (pos == 0)
+			{
+				StringBuilder quote = new StringBuilder();
+				quote.Append('\'');
+				for (int i = 1; i < lineRemainder.Length; ++i)
+				{
+					quote.Append(lineRemainder[i]);
+					if (lineRemainder[i] == '\'')
+					{
+						if (lineRemainder[i - 1] != '\\' || lineRemainder[i - 2] == '\\')
+						{
+							tokBuffer.Add(quote.ToString());
+							lineRemainder = lineRemainder.Remove(0, i + 1);
+							return "";
+						}
+					}
+				}
+			}
+			else
+			{
+				retStr = lineRemainder.Remove(pos, lineRemainder.Length - pos);
+				lineRemainder = lineRemainder.Remove(0, pos);
+				return retStr;
+			}
+			throw new Exception("extractSQuote failed");
+		}
+		//
+		//----< extract comment >------------------------------------------
 
-      line = lineRemainder;
-      lineRemainder = "";
-      return line;
-    }
-    //----< eat C comment - may consume more lines >---------------------
+		string extractComment(ref string lineRemainder)
+		{
+			char[] WhiteChars = { ' ', '\t', '\r' };
+			string line;
+			int pos = lineRemainder.IndexOf("//");
+			if (pos == 0)                          // whole line is C++ comment
+			{
+				if (lineRemainder[lineRemainder.Length - 1] == '\n')
+				{
+					lineRemainder = lineRemainder.Remove(lineRemainder.Length - 1, 1);
+					tokBuffer.Add(lineRemainder);
+					lineRemainder = "";
+					return "\n";
+				}
+				tokBuffer.Add(lineRemainder);
+				lineRemainder = "";
+				return lineRemainder;
+			}
+			if (pos > -1)                          // end of line is C++ comment
+			{
+				line = lineRemainder.Remove(pos, lineRemainder.Length - pos).TrimEnd(WhiteChars);
+				lineRemainder = lineRemainder.Remove(0, pos);
+				return line;
+			}
+			pos = lineRemainder.IndexOf("/*");    // line contains C comment
+			if (pos > -1)
+			{
+				if (pos == 0)
+				{
+					eatCComment();
+					return "";
+				}
+				string retStr = lineRemainder.Remove(pos, lineRemainder.Length - pos);
+				lineRemainder = lineRemainder.Remove(0, pos);
+				return retStr;
+			}
+			// if we get here there is no comment in line
 
-    void eatCComment()
-    {
-      List<char> comment = new List<char>();
-      while(true)
-      {
-        int pos = lineRemainder.IndexOf("*/");
-        for (int i = 0; i < lineRemainder.Length; ++i)
-        {
-          if(pos != i)  // not at end of comment
-            comment.Add(lineRemainder[i]);
-          else
-          { // end of comment
-            comment.Add(lineRemainder[i]);
-            comment.Add(lineRemainder[i + 1]);
-            string temp = new string(comment.ToArray());
-            tokBuffer.Add(temp);
-            lineRemainder = lineRemainder.Remove(0,i+2);
-            return;
-          }
-        }
-        // end of lineRemainder
-        lineRemainder = ts.ReadLine();  // ReadLine discards newline
-        lineCount++;
-        if(lineRemainder == null)
-        {
-          throw new Exception("encountered eof while processing comment");
-        }
-        lineRemainder = lineRemainder + "\n";  // replace newline
-        lineRemainder = removeReturn(lineRemainder);
-      }
-    }
-    //
-    //----< treat underscore as ASCII >----------------------------------
+			line = lineRemainder;
+			lineRemainder = "";
+			return line;
+		}
+		//----< eat C comment - may consume more lines >---------------------
 
-    bool IsGrammarPunctuation(char ch)
-    {
-      if (ch == '_')
-        return false;
-      if (Char.IsPunctuation(ch))
-        return true;
-      return false;
-    }
-    //----< consumes ASCII characters from stream >----------------------
+		void eatCComment()
+		{
+			List<char> comment = new List<char>();
+			while (true)
+			{
+				int pos = lineRemainder.IndexOf("*/");
+				for (int i = 0; i < lineRemainder.Length; ++i)
+				{
+					if (pos != i)  // not at end of comment
+						comment.Add(lineRemainder[i]);
+					else
+					{ // end of comment
+						comment.Add(lineRemainder[i]);
+						comment.Add(lineRemainder[i + 1]);
+						string temp = new string(comment.ToArray());
+						tokBuffer.Add(temp);
+						lineRemainder = lineRemainder.Remove(0, i + 2);
+						return;
+					}
+				}
+				// end of lineRemainder
+				lineRemainder = ts.ReadLine();  // ReadLine discards newline
+				lineCount++;
+				if (lineRemainder == null)
+				{
+					throw new Exception("encountered eof while processing comment");
+				}
+				lineRemainder = lineRemainder + "\n";  // replace newline
+				lineRemainder = removeReturn(lineRemainder);
+			}
+		}
+		//
+		//----< treat underscore as ASCII >----------------------------------
 
-    string eatAscii(ref string tok)
-    {
-      string retStr = tok;
-      for(int i=0; i<tok.Length; ++i)
-      {
-        if(IsGrammarPunctuation(tok[i]) || Char.IsSymbol(tok[i]))
-        {
-          retStr = tok.Remove(i,tok.Length-i);
-          tok = tok.Remove(0,i);
-          return retStr;
-        }
-      }
-      tok = "";
-      return retStr;
-    }
-    //----< consumes a single punctuator from stream >-------------------
+		bool IsGrammarPunctuation(char ch)
+		{
+			if (ch == '_')
+				return false;
+			if (Char.IsPunctuation(ch))
+				return true;
+			return false;
+		}
+		//----< consumes ASCII characters from stream >----------------------
 
-    string eatPunctuationChar(ref string tok)
-    {
-      string retStr = tok.Remove(1,tok.Length-1);
-      tok = tok.Remove(0,1);
-      return retStr;
-    }
-    //----< fills internal buffer with tokens >--------------------------
+		string eatAscii(ref string tok)
+		{
+			string retStr = tok;
+			for (int i = 0; i < tok.Length; ++i)
+			{
+				if (IsGrammarPunctuation(tok[i]) || Char.IsSymbol(tok[i]))
+				{
+					retStr = tok.Remove(i, tok.Length - i);
+					tok = tok.Remove(0, i);
+					return retStr;
+				}
+			}
+			tok = "";
+			return retStr;
+		}
+		//----< consumes a single punctuator from stream >-------------------
 
-    bool fillBuffer()
-    {
-      string line;
-      if(!getLine(out line))
-        return false;             // end of token source
-      if(line == "")
-        return (tokBuffer.Count > 0);
-      char [] delim = { ' ', '\t', '\f' };
-      string [] toks = line.Split(delim);
-      foreach(string tok in toks)
-      {
-        string temp = tok;
-        while(temp.Length > 0)
-        {
-          if(IsGrammarPunctuation(temp[0]) || Char.IsSymbol(temp[0]))
-          {
-            string punc = eatPunctuationChar(ref temp);
-            tokBuffer.Add(punc);
-          }
-          else
-          {
-            string ascii = eatAscii(ref temp);
-            tokBuffer.Add(ascii);
-          }
-        }
-      }
-      return true;
-    }
-    //----< extracts tokens from internal buffer, filling if needed >----
+		string eatPunctuationChar(ref string tok)
+		{
+			string retStr = tok.Remove(1, tok.Length - 1);
+			tok = tok.Remove(0, 1);
+			return retStr;
+		}
+		//----< fills internal buffer with tokens >--------------------------
 
-    public string getTok()
-    {
-      char[] trimChar = { '\n' };
-      string tok = peekNextTok();
-      if(tok != "")
-        tokBuffer.RemoveAt(0);
-      if (tok.IndexOf('\n') == tok.Length - 1 && tok.Length > 1)
-      {
-        tok = tok.TrimEnd(trimChar);
-        tokBuffer.Insert(0, "\n");
-      }
-      if (returnComments)
-        return tok;
+		bool fillBuffer()
+		{
+			string line;
+			if (!getLine(out line))
+				return false;             // end of token source
+			if (line == "")
+				return (tokBuffer.Count > 0);
+			char[] delim = { ' ', '\t', '\f' };
+			string[] toks = line.Split(delim);
+			foreach (string tok in toks)
+			{
+				string temp = tok;
+				while (temp.Length > 0)
+				{
+					if (IsGrammarPunctuation(temp[0]) || Char.IsSymbol(temp[0]))
+					{
+						string punc = eatPunctuationChar(ref temp);
+						tokBuffer.Add(punc);
+					}
+					else
+					{
+						string ascii = eatAscii(ref temp);
+						tokBuffer.Add(ascii);
+					}
+				}
+			}
+			return true;
+		}
+		//----< extracts tokens from internal buffer, filling if needed >----
 
-      while(true)  // skip comments
-      {
-        if(tok.Length > 1 && tok[0] == '/' && (tok[1] == '*' || tok[1] == '/'))
-          tok = getTok();
-        else
-          break;
-      }
-      return tok;
-    }
-    //----< look at next token without extracting >----------------------
+		public string getTok()
+		{
+			char[] trimChar = { '\n' };
+			string tok = peekNextTok();
+			if (tok != "")
+				tokBuffer.RemoveAt(0);
+			if (tok.IndexOf('\n') == tok.Length - 1 && tok.Length > 1)
+			{
+				tok = tok.TrimEnd(trimChar);
+				tokBuffer.Insert(0, "\n");
+			}
+			if (returnComments)
+				return tok;
 
-    public string peekNextTok()
-    {
-      if(tokBuffer.Count == 0)
-        if(!fillBuffer())
-          return "";
-      string tok = tokBuffer[0];
-      return tok;
-    }
-    //----< put token back into tokBuffer >------------------------------
+			while (true)  // skip comments
+			{
+				if (tok.Length > 1 && tok[0] == '/' && (tok[1] == '*' || tok[1] == '/'))
+					tok = getTok();
+				else
+					break;
+			}
+			return tok;
+		}
+		//----< look at next token without extracting >----------------------
 
-    public void pushBack(string tok)
-    {
-      tokBuffer.Insert(0,tok);
-    }
+		public string peekNextTok()
+		{
+			if (tokBuffer.Count == 0)
+				if (!fillBuffer())
+					return "";
+			string tok = tokBuffer[0];
+			return tok;
+		}
+		//----< put token back into tokBuffer >------------------------------
 
-    //----< test stub >--------------------------------------------------
+		public void pushBack(string tok)
+		{
+			tokBuffer.Insert(0, tok);
+		}
 
-#if(TEST_TOKER)
+		//----< test stub >--------------------------------------------------
+
+#if (TEST_TOKER)
 
     [STAThread]
     static void Main(string[] args)
@@ -699,5 +691,5 @@ namespace Parser.Parser
       }
     }
 #endif
-  }
+	}
 }

@@ -1,12 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////
-// RulesAndActions.cs                                                //
-// ver 2.3                                                           //
-// Language:    C#, 2008, .Net Framework 4.0                         //
-// Platform:    Dell Precision T7400, Win7, SP1                      //
-// Application: Demonstration for CSE681, Project #2, Fall 2011      //
-// Author:      Jim Fawcett, CST 4-187, Syracuse University          //
-//              (315) 443-3948, jfawcett@twcny.rr.com                //
-///////////////////////////////////////////////////////////////////////
+﻿// RulesAndActions.cs                                                
+
 /*
  * Package Operations:
  * -------------------
@@ -97,63 +90,63 @@ using Parser.Rules;
 
 namespace Parser.Analyzers
 {
-  public class RulesBasedParserTwo : CodeAnalyzer
-  {
-    private readonly List<Elem> _locations;
-    private readonly Dictionary<string, List<string>> _classMembers;
+	public class RulesBasedParserTwo : CodeAnalyzer
+	{
+		private readonly List<Elem> _locations;
+		private readonly Dictionary<string, List<string>> _classMembers;
 
-    public RulesBasedParserTwo(CSemiExp semi, List<Elem> locations, Dictionary<string, List<string>> classMembers)
-    {
-      _locations = locations;
-      _classMembers = classMembers;
-      Repo.semi = semi;
-    }
-    public virtual RulesBasedParser build()
-    {
-      RulesBasedParser rulesBasedParser = new RulesBasedParser();
+		public RulesBasedParserTwo(CSemiExp semi, List<Elem> locations, Dictionary<string, List<string>> classMembers)
+		{
+			_locations = locations;
+			_classMembers = classMembers;
+			Repo.semi = semi;
+		}
+		public virtual RulesBasedParser build()
+		{
+			RulesBasedParser rulesBasedParser = new RulesBasedParser();
 
-      // decide what to show
-      AAction.displaySemi = false;
-      AAction.displayStack = false;  // false is default
+			// decide what to show
+			AAction.displaySemi = false;
+			AAction.displayStack = false;  // false is default
 
-      // action used for namespaces, locations, and functions
-      PushStack push = new PushStack(Repo);
+			// action used for namespaces, locations, and functions
+			PushStack push = new PushStack(Repo);
 
-      // capture class dependencies
-      var detectDeps = new DetectClassDependency(Repo, _locations);
-      var addClassDep = new AddClassDependency(Repo);
-      detectDeps.add(addClassDep);
-      rulesBasedParser.add(detectDeps);
+			// capture class dependencies
+			var detectDeps = new DetectClassDependency(Repo, _locations);
+			var addClassDep = new AddClassDependency(Repo);
+			detectDeps.add(addClassDep);
+			rulesBasedParser.add(detectDeps);
 
-      var detectMemberUsage = new DetectMemberUsage(Repo, _classMembers);
-      var addMemberUsage = new AddMemberUsage(Repo);
-      detectMemberUsage.add(addMemberUsage);
-      rulesBasedParser.add(detectMemberUsage);
+			var detectMemberUsage = new DetectMemberUsage(Repo, _classMembers);
+			var addMemberUsage = new AddMemberUsage(Repo);
+			detectMemberUsage.add(addMemberUsage);
+			rulesBasedParser.add(detectMemberUsage);
 
-      // capture namespace info
-      DetectNamespace detectNS = new DetectNamespace();
-      detectNS.add(push);
-      rulesBasedParser.add(detectNS);
+			// capture namespace info
+			DetectNamespace detectNS = new DetectNamespace();
+			detectNS.add(push);
+			rulesBasedParser.add(detectNS);
 
-      // capture class info
-      DetectClass detectCl = new DetectClass();
-      detectCl.add(push);
-      rulesBasedParser.add(detectCl);
+			// capture class info
+			DetectClass detectCl = new DetectClass();
+			detectCl.add(push);
+			rulesBasedParser.add(detectCl);
 
-      // capture function info
-      DetectFunction detectFN = new DetectFunction(Repo);
-      detectFN.add(push);
-      rulesBasedParser.add(detectFN);
+			// capture function info
+			DetectFunction detectFN = new DetectFunction(Repo);
+			detectFN.add(push);
+			rulesBasedParser.add(detectFN);
 
-      // handle leaving scopes
-      DetectLeavingScope leave = new DetectLeavingScope();
-      PopStack pop = new PopStack(Repo);
-      leave.add(pop);
-      rulesBasedParser.add(leave);
+			// handle leaving scopes
+			DetectLeavingScope leave = new DetectLeavingScope();
+			PopStack pop = new PopStack(Repo);
+			leave.add(pop);
+			rulesBasedParser.add(leave);
 
-      // rulesBasedParser configured
-      return rulesBasedParser;
-    }
-  }
+			// rulesBasedParser configured
+			return rulesBasedParser;
+		}
+	}
 }
 

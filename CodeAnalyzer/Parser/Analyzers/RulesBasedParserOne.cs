@@ -1,12 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////
-// RulesAndActions.cs                                                //
-// ver 2.3                                                           //
-// Language:    C#, 2008, .Net Framework 4.0                         //
-// Platform:    Dell Precision T7400, Win7, SP1                      //
-// Application: Demonstration for CSE681, Project #2, Fall 2011      //
-// Author:      Jim Fawcett, CST 4-187, Syracuse University          //
-//              (315) 443-3948, jfawcett@twcny.rr.com                //
-///////////////////////////////////////////////////////////////////////
+﻿// RulesAndActions.cs                                                
+
 /*
  * Package Operations:
  * -------------------
@@ -96,58 +89,58 @@ using Parser.Rules;
 
 namespace Parser.Analyzers
 {
-  public class RulesBasedParserOne : CodeAnalyzer
-  {
-    public RulesBasedParserOne(CSemiExp semi)
-    {
-      Repo.semi = semi;
-    }
-    public virtual RulesBasedParser build()
-    {
-      RulesBasedParser rulesBasedParser = new RulesBasedParser();
+	public class RulesBasedParserOne : CodeAnalyzer
+	{
+		public RulesBasedParserOne(CSemiExp semi)
+		{
+			Repo.semi = semi;
+		}
+		public virtual RulesBasedParser build()
+		{
+			RulesBasedParser rulesBasedParser = new RulesBasedParser();
 
-      // decide what to show
-      AAction.displaySemi = false;
-      AAction.displayStack = false;  // false is default
+			// decide what to show
+			AAction.displaySemi = false;
+			AAction.displayStack = false;  // false is default
 
-      // action used for namespaces, classes, and functions
-      PushStack push = new PushStack(Repo);
+			// action used for namespaces, classes, and functions
+			PushStack push = new PushStack(Repo);
 
-      // capture namespace info
-      DetectNamespace detectNS = new DetectNamespace();
-      detectNS.add(push);
-      rulesBasedParser.add(detectNS);
+			// capture namespace info
+			DetectNamespace detectNS = new DetectNamespace();
+			detectNS.add(push);
+			rulesBasedParser.add(detectNS);
 
-      // capture class info
-      DetectClass detectCl = new DetectClass();
-      detectCl.add(push);
-      rulesBasedParser.add(detectCl);
+			// capture class info
+			DetectClass detectCl = new DetectClass();
+			detectCl.add(push);
+			rulesBasedParser.add(detectCl);
 
-      // capture function info
-      DetectFunction detectFN = new DetectFunction(Repo);
-      detectFN.add(push);
-      rulesBasedParser.add(detectFN);
+			// capture function info
+			DetectFunction detectFN = new DetectFunction(Repo);
+			detectFN.add(push);
+			rulesBasedParser.add(detectFN);
 
-      // handle entering anonymous scopes, e.g., if, while, etc.
-      DetectAnonymousScope anon = new DetectAnonymousScope();
-      anon.add(push);
-      rulesBasedParser.add(anon);
+			// handle entering anonymous scopes, e.g., if, while, etc.
+			DetectAnonymousScope anon = new DetectAnonymousScope();
+			anon.add(push);
+			rulesBasedParser.add(anon);
 
-      // handle leaving scopes
-      DetectLeavingScope leave = new DetectLeavingScope();
-      PopStack pop = new PopStack(Repo);
-      leave.add(pop);
-      rulesBasedParser.add(leave);
+			// handle leaving scopes
+			DetectLeavingScope leave = new DetectLeavingScope();
+			PopStack pop = new PopStack(Repo);
+			leave.add(pop);
+			rulesBasedParser.add(leave);
 
-      // save class member variables
-      var detectMembers = new DetectMemberVariable(Repo);
-      var addClassMember = new AddClassMember(Repo);
-      detectMembers.add(addClassMember);
-      rulesBasedParser.add(detectMembers);
+			// save class member variables
+			var detectMembers = new DetectMemberVariable(Repo);
+			var addClassMember = new AddClassMember(Repo);
+			detectMembers.add(addClassMember);
+			rulesBasedParser.add(detectMembers);
 
-      // rulesBasedParser configured
-      return rulesBasedParser;
-    }
-  }
+			// rulesBasedParser configured
+			return rulesBasedParser;
+		}
+	}
 }
 

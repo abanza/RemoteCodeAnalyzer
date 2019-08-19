@@ -1,12 +1,6 @@
-﻿///////////////////////////////////////////////////////////////////////////
-// Display.cs  -  Manage Display properties                              //
-// ver 1.0                                                               //
-// Language:    C#, Visual Studio 2013, .Net Framework 4.5               //
-// Platform:    Dell XPS 2720 , Win 8.1 Pro                              //
-// Application: Pr#2 Help, CSE681, Fall 2014                             //
-// Author:      Jim Fawcett, CST 2-187, Syracuse University              //
-//              (315) 443-3948, jfawcett@twcny.rr.com                    //
-///////////////////////////////////////////////////////////////////////////
+﻿
+// Display.cs  -  Manage Display properties                              
+
 /*
  * Package Operations
  * ==================
@@ -43,103 +37,103 @@ using System.Threading;
 
 namespace Display
 {
-  static public class Display
-  {
-    static Display()
-    {
-      showFiles = false;
-      showDirectories = true;
-      showActions = false;
-      showRules = false;
-      useFooter = false;
-      useConsole = false;
-      goSlow = false;
-      width = 33;
-    }
-    static public bool showFiles { get; set; }
-    static public bool showDirectories { get; set; }
-    static public bool showActions { get; set; }
-    static public bool showRules { get; set; }
-    static public bool showSemi { get; set; }
-    static public bool useFooter { get; set; }
-    static public bool useConsole { get; set; }
-    static public bool goSlow { get; set; }
-    static public int width { get; set; }
+	static public class Display
+	{
+		static Display()
+		{
+			showFiles = false;
+			showDirectories = true;
+			showActions = false;
+			showRules = false;
+			useFooter = false;
+			useConsole = false;
+			goSlow = false;
+			width = 33;
+		}
+		static public bool showFiles { get; set; }
+		static public bool showDirectories { get; set; }
+		static public bool showActions { get; set; }
+		static public bool showRules { get; set; }
+		static public bool showSemi { get; set; }
+		static public bool useFooter { get; set; }
+		static public bool useConsole { get; set; }
+		static public bool goSlow { get; set; }
+		static public int width { get; set; }
 
-    static public void displaySemiString(string semi)
-    {
-      if (showSemi && useConsole)
-      {
-        Console.Write("\n");
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < semi.Length; ++i)
-          if (!semi[i].Equals('\n'))
-            sb.Append(semi[i]);
-        Console.Write("\n  {0}", sb);
-      }
-    }
+		static public void displaySemiString(string semi)
+		{
+			if (showSemi && useConsole)
+			{
+				Console.Write("\n");
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < semi.Length; ++i)
+					if (!semi[i].Equals('\n'))
+						sb.Append(semi[i]);
+				Console.Write("\n  {0}", sb);
+			}
+		}
 
-    static public void displayString(Action<string> act, string str)
-    {
-      if (goSlow) Thread.Sleep(200);
-      if (act != null && useFooter)
-        act.Invoke(str.Truncate(width));
-      if (useConsole)
-        Console.Write("\n  {0}", str);
-    }
+		static public void displayString(Action<string> act, string str)
+		{
+			if (goSlow) Thread.Sleep(200);
+			if (act != null && useFooter)
+				act.Invoke(str.Truncate(width));
+			if (useConsole)
+				Console.Write("\n  {0}", str);
+		}
 
-    static public void displayString(string str, bool force=false)
-    {
-      if (useConsole || force)
-        Console.Write("\n  {0}", str);
-    }
+		static public void displayString(string str, bool force = false)
+		{
+			if (useConsole || force)
+				Console.Write("\n  {0}", str);
+		}
 
-    static public void displayRules(Action<string> act, string msg)
-    {
-      if (showRules)
-      {
-        displayString(act, msg);
-      }
-    }
+		static public void displayRules(Action<string> act, string msg)
+		{
+			if (showRules)
+			{
+				displayString(act, msg);
+			}
+		}
 
-    static public void displayActions(Action<string> act, string msg)
-    {
-      if (showActions)
-      {
-        displayString(act, msg);
-      }
-    }
+		static public void displayActions(Action<string> act, string msg)
+		{
+			if (showActions)
+			{
+				displayString(act, msg);
+			}
+		}
 
-    static public void displayFiles(Action<string> act, string file)
-    {
-      if (showFiles)
-      {
-        displayString(act, file);
-      }
-    }
+		static public void displayFiles(Action<string> act, string file)
+		{
+			if (showFiles)
+			{
+				displayString(act, file);
+			}
+		}
 
-    static public void displayDirectory(Action<string> act, string file)
-    {
-      if (showDirectories)
-      {
-        displayString(act, file);
-      }
-    }
+		static public void displayDirectory(Action<string> act, string file)
+		{
+			if (showDirectories)
+			{
+				displayString(act, file);
+			}
+		}
 
-#if(TEST_DISPLAY)
-    static void Main(string[] args)
-    {
-    }
+#if (TEST_DISPLAY)
+		static void Main(string[] args)
+		{
+		}
 #endif
-  }
+	}
 
-  //----< extension method to truncate strings
-  public static class StringExt
-  {
-    public static string Truncate(this string value, int maxLength)
-    {
-      if (string.IsNullOrEmpty(value)) return value;
-      return value.Length <= maxLength ? value : value.Substring(0, maxLength);
-    }
-  }
+	//----< extension method to truncate strings
+	public static class StringExt
+	{
+		public static string Truncate(this string value, int maxLength)
+		{
+			if (string.IsNullOrEmpty(value)) return value;
+			return value.Length <= maxLength ? value : value.Substring(0, maxLength);
+		}
+	}
 }

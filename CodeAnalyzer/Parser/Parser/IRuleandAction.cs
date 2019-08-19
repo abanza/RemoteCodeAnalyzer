@@ -1,12 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
-// IRuleAndAction.cs - Interfaces & abstract bases for rules and actions //
-// ver 1.1                                                               //
-// Language:    C#, 2008, .Net Framework 4.0                             //
-// Platform:    Dell Precision T7400, Win7, SP1                          //
-// Application: Demonstration for CSE681, Project #2, Fall 2011          //
-// Author:      Jim Fawcett, CST 4-187, Syracuse University              //
-//              (315) 443-3948, jfawcett@twcny.rr.com                    //
-///////////////////////////////////////////////////////////////////////////
+﻿// IRuleAndAction.cs - Interfaces & abstract bases for rules and actions 
+
 /*
  * Module Operations:
  * ------------------
@@ -42,89 +35,89 @@ using System.Collections.Generic;
 
 namespace Parser.Parser
 {
-  /////////////////////////////////////////////////////////
-  // contract for actions used by parser rules
+	/////////////////////////////////////////////////////////
+	// contract for actions used by parser rules
 
-  public interface IAction
-  {
-    void doAction(CSemiExp semi);
-  }
-  /////////////////////////////////////////////////////////
-  // abstract action base supplying common functions
+	public interface IAction
+	{
+		void doAction(CSemiExp semi);
+	}
+	/////////////////////////////////////////////////////////
+	// abstract action base supplying common functions
 
-  public abstract class AAction : IAction
-  {
-    static bool displaySemi_;   // default
-    static bool displayStack_;  // default
+	public abstract class AAction : IAction
+	{
+		static bool displaySemi_;   // default
+		static bool displayStack_;  // default
 
-    protected Repository repo_;
+		protected Repository repo_;
 
-    static public Action<string> actionDelegate;
+		static public Action<string> actionDelegate;
 
-    public abstract void doAction(CSemiExp semi);
+		public abstract void doAction(CSemiExp semi);
 
-    public static bool displaySemi 
-    {
-      get { return displaySemi_; }
-      set { displaySemi_ = value; }
-    }
-    public static bool displayStack 
-    {
-      get { return displayStack_; }
-      set { displayStack_ = value; }
-    }
+		public static bool displaySemi
+		{
+			get { return displaySemi_; }
+			set { displaySemi_ = value; }
+		}
+		public static bool displayStack
+		{
+			get { return displayStack_; }
+			set { displayStack_ = value; }
+		}
 
-    public virtual void display(CSemiExp semi)
-    {
-      if(displaySemi)
-        for (int i = 0; i < semi.count; ++i)
-          Console.Write("{0} ", semi[i]);
-    }
-  }
-  /////////////////////////////////////////////////////////
-  // contract for parser rules
+		public virtual void display(CSemiExp semi)
+		{
+			if (displaySemi)
+				for (int i = 0; i < semi.count; ++i)
+					Console.Write("{0} ", semi[i]);
+		}
+	}
+	/////////////////////////////////////////////////////////
+	// contract for parser rules
 
-  public interface IRule
-  {
-    bool test(CSemiExp semi);
-    void add(IAction action);
-  }
-  /////////////////////////////////////////////////////////
-  // abstract rule base implementing common functions
+	public interface IRule
+	{
+		bool test(CSemiExp semi);
+		void add(IAction action);
+	}
+	/////////////////////////////////////////////////////////
+	// abstract rule base implementing common functions
 
-  public abstract class ARule : IRule
-  {
-    private List<IAction> actions;
-    static public Action<string> actionDelegate;
+	public abstract class ARule : IRule
+	{
+		private List<IAction> actions;
+		static public Action<string> actionDelegate;
 
-    public ARule()
-    {
-      actions = new List<IAction>();
-    }
-    public void add(IAction action)
-    {
-      actions.Add(action);
-    }
-    abstract public bool test(CSemiExp semi);
-    public void doActions(CSemiExp semi)
-    {
-      foreach (IAction action in actions)
-        action.doAction(semi);
-    }
-    public int indexOfType(CSemiExp semi)
-    {
-      int indexCL = semi.Contains("class");
-      int indexIF = semi.Contains("interface");
-      int indexST = semi.Contains("struct");
-      int indexEN = semi.Contains("enum");
-      int indexDE = semi.Contains("delegate");
+		public ARule()
+		{
+			actions = new List<IAction>();
+		}
+		public void add(IAction action)
+		{
+			actions.Add(action);
+		}
+		abstract public bool test(CSemiExp semi);
+		public void doActions(CSemiExp semi)
+		{
+			foreach (IAction action in actions)
+				action.doAction(semi);
+		}
+		public int indexOfType(CSemiExp semi)
+		{
+			int indexCL = semi.Contains("class");
+			int indexIF = semi.Contains("interface");
+			int indexST = semi.Contains("struct");
+			int indexEN = semi.Contains("enum");
+			int indexDE = semi.Contains("delegate");
 
-      int index = Math.Max(indexCL, indexIF);
-      index = Math.Max(index, indexST);
-      index = Math.Max(index, indexEN);
-      index = Math.Max(index, indexDE);
-      return index;
-    }
-  }
+			int index = Math.Max(indexCL, indexIF);
+			index = Math.Max(index, indexST);
+			index = Math.Max(index, indexEN);
+			index = Math.Max(index, indexDE);
+			return index;
+		}
+	}
 }
 

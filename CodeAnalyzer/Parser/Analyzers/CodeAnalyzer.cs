@@ -1,12 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////
-// RulesAndActions.cs                                                //
-// ver 2.3                                                           //
-// Language:    C#, 2008, .Net Framework 4.0                         //
-// Platform:    Dell Precision T7400, Win7, SP1                      //
-// Application: Demonstration for CSE681, Project #2, Fall 2011      //
-// Author:      Jim Fawcett, CST 4-187, Syracuse University          //
-//              (315) 443-3948, jfawcett@twcny.rr.com                //
-///////////////////////////////////////////////////////////////////////
+﻿// RulesAndActions.cs                                                
+
 /*
  * Package Operations:
  * -------------------
@@ -94,14 +87,14 @@ using Parser.Parser;
 
 namespace Parser.Analyzers
 {
-  public abstract class CodeAnalyzer
-  {
-    protected readonly Repository Repo = new Repository();
+	public abstract class CodeAnalyzer
+	{
+		protected readonly Repository Repo = new Repository();
 
-    public Repository GetRepository()
-    {
-      return Repo;
-    }
-  }
+		public Repository GetRepository()
+		{
+			return Repo;
+		}
+	}
 }
 

@@ -1,12 +1,5 @@
-/////////////////////////////////////////////////////////////////////////
-// Semi.cs   -  Builds semiExpressions                                 //
-// ver 2.2                                                             //
-// Language:    C#, Visual Studio 10.0, .Net Framework 4.0             //
-// Platform:    Dell Precision T7400 , Win 7, SP 1                     //
-// Application: Pr#2 Help, CSE681, Fall 2011                           //
-// Author:      Jim Fawcett, CST 2-187, Syracuse University            //
-//              (315) 443-3948, jfawcett@twcny.rr.com                  //
-/////////////////////////////////////////////////////////////////////////
+// Semi.cs   -  Builds semiExpressions                                 
+
 /*
  * Module Operations
  * =================
@@ -111,324 +104,324 @@ using System.Text;
 
 namespace Parser.Parser
 {
-  ///////////////////////////////////////////////////////////////////////
-  // class CSemiExp - filters token stream and collects semiExpressions
+	///////////////////////////////////////////////////////////////////////
+	// class CSemiExp - filters token stream and collects semiExpressions
 
-  public class CSemiExp
-  {
-    CToker toker;
-    List<string> semiExp;
-    string currTok = "";
-    string prevTok = "";
+	public class CSemiExp
+	{
+		CToker toker;
+		List<string> semiExp;
+		string currTok = "";
+		string prevTok = "";
 
-    //----< line count property >----------------------------------------
+		//----< line count property >----------------------------------------
 
-    public int lineCount
-    {
-      get { return toker.lineCount; }
-    }
-    //----< constructor >------------------------------------------------
+		public int lineCount
+		{
+			get { return toker.lineCount; }
+		}
+		//----< constructor >------------------------------------------------
 
-    public CSemiExp()
-    {
-      toker = new CToker();
-      semiExp = new List<string>();
-      discardComments = true;  // not implemented yet
-      returnNewLines = true;
-      displayNewLines = false;
-    }
+		public CSemiExp()
+		{
+			toker = new CToker();
+			semiExp = new List<string>();
+			discardComments = true;  // not implemented yet
+			returnNewLines = true;
+			displayNewLines = false;
+		}
 
-    //----< test for equality >------------------------------------------
+		//----< test for equality >------------------------------------------
 
-    override public bool Equals(Object semi)
-    {
-      CSemiExp temp = (CSemiExp)semi;
-      if(temp.count != count)
-        return false;
-      for(int i=0; i<temp.count && i<count; ++i)
-        if(this[i] != temp[i])
-          return false;
-      return true;
-    }
+		override public bool Equals(Object semi)
+		{
+			CSemiExp temp = (CSemiExp)semi;
+			if (temp.count != count)
+				return false;
+			for (int i = 0; i < temp.count && i < count; ++i)
+				if (this[i] != temp[i])
+					return false;
+			return true;
+		}
 
-    //---< pos of first str in semi-expression if found, -1 otherwise >--
+		//---< pos of first str in semi-expression if found, -1 otherwise >--
 
-    public int FindFirst(string str)
-    {
-      for (int i = 0; i < count - 1; ++i)
-        if (this[i] == str)
-          return i;
-      return -1;
-    }
-    //---< pos of last str in semi-expression if found, -1 otherwise >--- 
+		public int FindFirst(string str)
+		{
+			for (int i = 0; i < count - 1; ++i)
+				if (this[i] == str)
+					return i;
+			return -1;
+		}
+		//---< pos of last str in semi-expression if found, -1 otherwise >--- 
 
-    public int FindLast(string str)
-    {
-      for (int i = count - 1; i >= 0; --i)
-        if (this[i] == str)
-          return i;
-      return -1;
-    }
-    //----< deprecated: here to avoid breakage with old code >----------- 
+		public int FindLast(string str)
+		{
+			for (int i = count - 1; i >= 0; --i)
+				if (this[i] == str)
+					return i;
+			return -1;
+		}
+		//----< deprecated: here to avoid breakage with old code >----------- 
 
-    public int Contains(string str)
-    {
-      return FindLast(str);
-    }
-    //----< have to override GetHashCode() >-----------------------------
+		public int Contains(string str)
+		{
+			return FindLast(str);
+		}
+		//----< have to override GetHashCode() >-----------------------------
 
-    override public Int32 GetHashCode()
-    {
-      return base.GetHashCode();
-    }
-    //----< opens member tokenizer with specified file >-----------------
+		override public Int32 GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+		//----< opens member tokenizer with specified file >-----------------
 
-    public bool open(string fileName)
-    {
-      return toker.openFile(fileName);
-    }
+		public bool open(string fileName)
+		{
+			return toker.openFile(fileName);
+		}
 
-    public bool open(Stream fileStream)
-    {
-      return toker.openFile(fileStream);
-    }
-    //----< close file stream >------------------------------------------
+		public bool open(Stream fileStream)
+		{
+			return toker.openFile(fileStream);
+		}
+		//----< close file stream >------------------------------------------
 
-    public void close()
-    {
-      toker.close();
-    }
-    //----< is this the last token in the current semiExpression? >------
+		public void close()
+		{
+			toker.close();
+		}
+		//----< is this the last token in the current semiExpression? >------
 
-    bool isTerminator(string tok)
-    {
-      switch(tok)
-      {
-        case ";" : return true;
-        case "{" : return true;
-        case "}" : return true;
-        case "\n" :
-          if (FindFirst("#") != -1)  // expensive - may wish to cache in get
-            return true;
-          return false;
-        default  : return false;
-      }
-    }
-    //----< get next token, saving previous token >----------------------
+		bool isTerminator(string tok)
+		{
+			switch (tok)
+			{
+				case ";": return true;
+				case "{": return true;
+				case "}": return true;
+				case "\n":
+					if (FindFirst("#") != -1)  // expensive - may wish to cache in get
+						return true;
+					return false;
+				default: return false;
+			}
+		}
+		//----< get next token, saving previous token >----------------------
 
-    string get()
-    {
-      prevTok = currTok;
-      currTok = toker.getTok();
-      if(verbose)
-        Console.Write("{0} ",currTok);
-      return currTok;
-    }
-    //----< is this character a punctuator> >----------------------------
+		string get()
+		{
+			prevTok = currTok;
+			currTok = toker.getTok();
+			if (verbose)
+				Console.Write("{0} ", currTok);
+			return currTok;
+		}
+		//----< is this character a punctuator> >----------------------------
 
-    bool IsPunc(char ch)
-    {
-      return (Char.IsPunctuation(ch) || Char.IsSymbol(ch));
-    }
-    //
-    //----< are these characters an operator? >--------------------------
-    //
-    // Performance issue - C# would not let me make opers static, so
-    // it is being constructed on every call.  This is not desireable,
-    // but neither is using a static data member that is initialized
-    // remotely.  I will think more about this later.
+		bool IsPunc(char ch)
+		{
+			return (Char.IsPunctuation(ch) || Char.IsSymbol(ch));
+		}
+		//
+		//----< are these characters an operator? >--------------------------
+		//
+		// Performance issue - C# would not let me make opers static, so
+		// it is being constructed on every call.  This is not desireable,
+		// but neither is using a static data member that is initialized
+		// remotely.  I will think more about this later.
 
-    bool IsOperatorPair(char first, char second)
-    { 
-      string[] opers = { 
-        "/*", "*/", "//", "!=", "==", ">=", "<=", "&&", "||", "--", "++",
-        "+=", "-=", "*=", "/=", "%=", "&=", "^=", "|=", "<<", ">>",
-        "\\n", "\\t", "\\r", "\\f"
-      };
+		bool IsOperatorPair(char first, char second)
+		{
+			string[] opers = {
+		"/*", "*/", "//", "!=", "==", ">=", "<=", "&&", "||", "--", "++",
+		"+=", "-=", "*=", "/=", "%=", "&=", "^=", "|=", "<<", ">>",
+		"\\n", "\\t", "\\r", "\\f"
+	  };
 
-      StringBuilder test = new StringBuilder();
-      test.Append(first).Append(second);
-      foreach(string oper in opers)
-        if(oper.Equals(test.ToString()))
-          return true;
-      return false;
-    }
-    //----< collect semiExpression from filtered token stream >----------
+			StringBuilder test = new StringBuilder();
+			test.Append(first).Append(second);
+			foreach (string oper in opers)
+				if (oper.Equals(test.ToString()))
+					return true;
+			return false;
+		}
+		//----< collect semiExpression from filtered token stream >----------
 
-    public bool getSemi()
-    {
-      semiExp.RemoveRange(0,semiExp.Count);  // empty container
-      do
-      {
-        get();
-        if(currTok == "")
-          return false;  // end of file
-        if(returnNewLines || currTok != "\n")
-          semiExp.Add(currTok);
-      } while(!isTerminator(currTok) || count == 0);
-      
-      // if for then append next two semiExps, e.g., for(int i=0; i<se.count; ++i) {
+		public bool getSemi()
+		{
+			semiExp.RemoveRange(0, semiExp.Count);  // empty container
+			do
+			{
+				get();
+				if (currTok == "")
+					return false;  // end of file
+				if (returnNewLines || currTok != "\n")
+					semiExp.Add(currTok);
+			} while (!isTerminator(currTok) || count == 0);
 
-      if(semiExp.Contains("for"))
-      {
-        CSemiExp se = clone();
-        getSemi();
-        se.Add(semiExp.ToArray());
-        getSemi();
-        se.Add(semiExp.ToArray());
-        semiExp.Clear();
-        for (int i = 0; i < se.count; ++i)
-          semiExp.Add(se[i]);
-      }
-      return (semiExp.Count > 0);
-    }
-    //----< get length property >----------------------------------------
+			// if for then append next two semiExps, e.g., for(int i=0; i<se.count; ++i) {
 
-    public int count
-    {
-      get { return semiExp.Count; }
-    }
-    //----< indexer for semiExpression >---------------------------------
+			if (semiExp.Contains("for"))
+			{
+				CSemiExp se = clone();
+				getSemi();
+				se.Add(semiExp.ToArray());
+				getSemi();
+				se.Add(semiExp.ToArray());
+				semiExp.Clear();
+				for (int i = 0; i < se.count; ++i)
+					semiExp.Add(se[i]);
+			}
+			return (semiExp.Count > 0);
+		}
+		//----< get length property >----------------------------------------
 
-    public string this[int i]
-    {
-      get { return semiExp[i]; }
-      set { semiExp[i] = value;        }
-    }
-    //----< insert token - fails if out of range and returns false>------
+		public int count
+		{
+			get { return semiExp.Count; }
+		}
+		//----< indexer for semiExpression >---------------------------------
 
-    public bool insert(int loc, string tok)
-    {
-      if(0 <= loc && loc < semiExp.Count)
-      {
-        semiExp.Insert(loc,tok);
-        return true;
-      }
-      return false;
-    }
-    //----< append token to end of semiExp >-----------------------------
+		public string this[int i]
+		{
+			get { return semiExp[i]; }
+			set { semiExp[i] = value; }
+		}
+		//----< insert token - fails if out of range and returns false>------
 
-    public CSemiExp Add(string token)
-    {
-      semiExp.Add(token);
-      return this;
-    }
-    //----< load semiExp from array of strings >-------------------------
+		public bool insert(int loc, string tok)
+		{
+			if (0 <= loc && loc < semiExp.Count)
+			{
+				semiExp.Insert(loc, tok);
+				return true;
+			}
+			return false;
+		}
+		//----< append token to end of semiExp >-----------------------------
 
-    public void Add(string [] source)
-    {
-      foreach(string tok in source)
-        semiExp.Add(tok);
-    }
-    //--< initialize semiExp with single ";" token - used for testing >--
+		public CSemiExp Add(string token)
+		{
+			semiExp.Add(token);
+			return this;
+		}
+		//----< load semiExp from array of strings >-------------------------
 
-    public bool initialize()
-    {
-      if(semiExp.Count > 0)
-        return false;
-      semiExp.Add(";");
-      return true;
-    }
-    //----< remove all contents of semiExp >-----------------------------
+		public void Add(string[] source)
+		{
+			foreach (string tok in source)
+				semiExp.Add(tok);
+		}
+		//--< initialize semiExp with single ";" token - used for testing >--
 
-    public void flush()
-    {
-      semiExp.RemoveRange(0,semiExp.Count);
-    }
-    //----< is this token a comment? >-----------------------------------
+		public bool initialize()
+		{
+			if (semiExp.Count > 0)
+				return false;
+			semiExp.Add(";");
+			return true;
+		}
+		//----< remove all contents of semiExp >-----------------------------
 
-    public bool isComment(string tok)
-    {
-      if(tok.Length > 1)
-        if(tok[0] == '/')
-          if(tok[1] == '/' || tok[1] == '*')
-            return true;
-      return false;
-    }
-    //----< display semiExpression on Console >--------------------------
+		public void flush()
+		{
+			semiExp.RemoveRange(0, semiExp.Count);
+		}
+		//----< is this token a comment? >-----------------------------------
 
-    public void display()
-    {
-      Console.Write("\n");
-      Console.Write(displayStr());
-    }
-    //----< return display string >--------------------------------------
+		public bool isComment(string tok)
+		{
+			if (tok.Length > 1)
+				if (tok[0] == '/')
+					if (tok[1] == '/' || tok[1] == '*')
+						return true;
+			return false;
+		}
+		//----< display semiExpression on Console >--------------------------
 
-    public string displayStr()
-    {
-      StringBuilder disp = new StringBuilder("");
-      foreach (string tok in semiExp)
-      {
-        disp.Append(tok);
-        if (tok.IndexOf('\n') != tok.Length-1)
-          disp.Append(" ");
-      }
-      return disp.ToString();
-    }
-    //----< announce tokens when verbose is true >-----------------------
+		public void display()
+		{
+			Console.Write("\n");
+			Console.Write(displayStr());
+		}
+		//----< return display string >--------------------------------------
 
-    public bool verbose
-    {
-      get;
-      set;
-    }
-    //----< determines whether new lines are returned with semi >--------
+		public string displayStr()
+		{
+			StringBuilder disp = new StringBuilder("");
+			foreach (string tok in semiExp)
+			{
+				disp.Append(tok);
+				if (tok.IndexOf('\n') != tok.Length - 1)
+					disp.Append(" ");
+			}
+			return disp.ToString();
+		}
+		//----< announce tokens when verbose is true >-----------------------
 
-    public bool returnNewLines
-    {
-      get;
-      set;
-    }
-    //----< determines whether new lines are displayed >-----------------
+		public bool verbose
+		{
+			get;
+			set;
+		}
+		//----< determines whether new lines are returned with semi >--------
 
-    public bool displayNewLines
-    {
-      get;
-      set;
-    }
-    //----< determines whether comments are discarded >------------------
+		public bool returnNewLines
+		{
+			get;
+			set;
+		}
+		//----< determines whether new lines are displayed >-----------------
 
-    public bool discardComments
-    {
-      get;
-      set;
-    }
-    //
-    //----< make a copy of semiEpression >-------------------------------
+		public bool displayNewLines
+		{
+			get;
+			set;
+		}
+		//----< determines whether comments are discarded >------------------
 
-    public CSemiExp clone()
-    {
-      CSemiExp copy = new CSemiExp();
-      for (int i = 0; i < count; ++i)
-      {
-        copy.Add(this[i]);
-      }
-      return copy;
-    }
-    //----< remove a token from semiExpression >-------------------------
+		public bool discardComments
+		{
+			get;
+			set;
+		}
+		//
+		//----< make a copy of semiEpression >-------------------------------
 
-    public bool remove(int i)
-    {
-      if (0 <= i && i < semiExp.Count)
-      {
-        semiExp.RemoveAt(i);
-        return true;
-      }
-      return false;
-    }
-    //----< remove a token from semiExpression >-------------------------
+		public CSemiExp clone()
+		{
+			CSemiExp copy = new CSemiExp();
+			for (int i = 0; i < count; ++i)
+			{
+				copy.Add(this[i]);
+			}
+			return copy;
+		}
+		//----< remove a token from semiExpression >-------------------------
 
-    public bool remove(string token)
-    {
-      if (semiExp.Contains(token))
-      {
-        semiExp.Remove(token);
-        return true;
-      }
-      return false;
-    }
-    //
-#if(TEST_SEMI)
+		public bool remove(int i)
+		{
+			if (0 <= i && i < semiExp.Count)
+			{
+				semiExp.RemoveAt(i);
+				return true;
+			}
+			return false;
+		}
+		//----< remove a token from semiExpression >-------------------------
+
+		public bool remove(string token)
+		{
+			if (semiExp.Contains(token))
+			{
+				semiExp.Remove(token);
+				return true;
+			}
+			return false;
+		}
+		//
+#if (TEST_SEMI)
 
     //----< test stub >--------------------------------------------------
 
@@ -493,5 +486,5 @@ namespace Parser.Parser
       semi.close();
     }
 #endif
-  }
+	}
 }

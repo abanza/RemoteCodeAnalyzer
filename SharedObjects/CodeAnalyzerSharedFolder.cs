@@ -1,19 +1,12 @@
-﻿////////////////////////////////////////////////////////////////////////////////////
-// CodeAnalyzerFile.cs                                                            //
-// ver 1.0                                                                        //
-// Language:    C# Visual Studio 2017                                             //
-// Platform:    HP G1 800, Windows 10                                             //
-// Application: Remote Code Analyzer Project, CSE681 - Software Modeling Analysis //
-// Author:      Adelard Banza, updated from Prof. Jim Fawcett codes               //
-//              abanza@syr.edu                                                    //
-////////////////////////////////////////////////////////////////////////////////////
+﻿// CodeAnalyzerFile.cs                                                            
+
 namespace SharedObjects
 {
-    public class CodeAnalyzerSharedFolder
-    {
-      public int Id { get; set; }
-      public string Name { get; set; }
-      public int OwnerId { get; set; }
-      public string OwnerName { get; set; }
-  }
+	public class CodeAnalyzerSharedFolder
+	{
+		public int Id { get; set; }
+		public string Name { get; set; }
+		public int OwnerId { get; set; }
+		public string OwnerName { get; set; }
+	}
 }

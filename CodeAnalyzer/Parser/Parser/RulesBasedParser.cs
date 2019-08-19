@@ -1,12 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////
-// RulesBasedParser.cs                                               //
-// ver 1.5                                                           //
-// Language:    C#, 2008, .Net Framework 4.0                         //
-// Platform:    Dell Precision T7400, Win7, SP1                      //
-// Application: Demonstration for CSE681, Project #2, Fall 2011      //
-// Author:      Jim Fawcett, CST 4-187, Syracuse University          //
-//              (315) 443-3948, jfawcett@twcny.rr.com                //
-///////////////////////////////////////////////////////////////////////
+﻿// RulesBasedParser.cs                                               
+
 /*
  * Module Operations:
  * ------------------
@@ -41,33 +34,33 @@ using System.Collections.Generic;
 
 namespace Parser.Parser
 {
-  /////////////////////////////////////////////////////////
-  // rule-based parser used for code analysis
+	/////////////////////////////////////////////////////////
+	// rule-based parser used for code analysis
 
-  public class RulesBasedParser
-  {
-    private List<IRule> Rules;
+	public class RulesBasedParser
+	{
+		private List<IRule> Rules;
 
-    public RulesBasedParser()
-    {
-      Rules = new List<IRule>();
-    }
-    public void add(IRule rule)
-    {
-      Rules.Add(rule);
-    }
-    public void parse(CSemiExp semi)
-    {
-      // Note: rule returns true to tell parser to stop
-      //       processing the current semiExp
-      
-      Display.Display.displaySemiString(semi.displayStr());
+		public RulesBasedParser()
+		{
+			Rules = new List<IRule>();
+		}
+		public void add(IRule rule)
+		{
+			Rules.Add(rule);
+		}
+		public void parse(CSemiExp semi)
+		{
+			// Note: rule returns true to tell parser to stop
+			//       processing the current semiExp
 
-      foreach (IRule rule in Rules)
-      {
-        if (rule.test(semi))
-          break;
-      }
-    }
-  }
+			Display.Display.displaySemiString(semi.displayStr());
+
+			foreach (IRule rule in Rules)
+			{
+				if (rule.test(semi))
+					break;
+			}
+		}
+	}
 }
